@@ -86,9 +86,9 @@
                                       <button class="primary-btn fix-gr-bg" data-toggle="tooltip" title="{{$tooltip}}">
                                             <span class="ti-check"></span>
                                           @isset($program)
-                                              @lang('Update District')
+                                              @lang('Update Program')
                                           @else
-                                              @lang('Save District')
+                                              @lang('Save Program')
                                           @endisset
                                         </button>
                                     </div>

@@ -118,7 +118,7 @@
                      
                             <div class="col-lg-3">
                                 <div class="input-effect">
-                                     <select name="district_name" onchange="get_school(this);" class="niceSelect w-100 bb form-control {{ $errors->has('district_name') ? ' is-invalid' : '' }}" id="district_name">
+                                     <select name="district_name"   class="niceSelect w-100 bb form-control {{ $errors->has('district_name') ? ' is-invalid' : '' }}" id="district_name">
                                         <option data-display="@lang('select district')" value="{{old('district_name')}}">@lang('district')<span>*</span></option>
                                          @foreach($districts as $district)
                                           

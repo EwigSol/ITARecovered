@@ -27,6 +27,8 @@ class ClassRequest extends FormRequest
         return [
             'name' => ['required', 'max:200' , Rule::unique('sm_classes', 'class_name')->where('academic_id', getAcademicId())->where('school_id', auth()->user()->school_id)->ignore($this->id)],
             'section' => "required",
+            'district_name' =>"required",
+            'school_name'=>"required"
         ];
     }
 }

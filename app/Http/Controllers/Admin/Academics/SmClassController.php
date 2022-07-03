@@ -14,7 +14,8 @@ use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Admin\Academics\ClassRequest;
-
+use App\Models\District;
+use App\SmSchool;
 class SmClassController extends Controller
 {
     public $date;
@@ -31,8 +32,14 @@ class SmClassController extends Controller
 
 
         try {
-            $sections = SmSection::get();
-            $classes = SmClass::with('groupclassSections')->get();
+            $sections = SmSection::get(); 
+            
+            $classes = SmClass::with('groupclassSections')->get();  
+            // $classes = DB::table('sm_classes')
+            // ->leftjoin('sm_class_sections','class_id','sm_classes.id')
+            // ->leftjoin('sm_sections','','')->where('active_status',1)
+
+            $districts = District::get();
         
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];
@@ -40,7 +47,7 @@ class SmClassController extends Controller
                 $data['sections'] = $sections->toArray();
                 return ApiBaseMethod::sendResponse($data, null);
             }
-            return view('backEnd.academics.class', compact('classes', 'sections'));
+            return view('backEnd.academics.class', compact('classes', 'sections','districts'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
@@ -70,7 +77,9 @@ class SmClassController extends Controller
                         $class->class_name = $request->name;
                         $class->created_at = YearCheck::getYear() . '-' . date('m-d h:i:s');
                         $class->created_by=auth()->user()->id;
-                        $class->school_id = Auth::user()->school_id;
+                        // $class->school_id = Auth::user()->school_id;
+                        $class->district_idFk = $request->district_name;
+                        $class->school_id = $request->school_name;
                         $class->academic_id = getAcademicId();
                         $class->save();
                         $class->toArray();
@@ -80,7 +89,7 @@ class SmClassController extends Controller
                             $smClassSection->class_id = $class->id;
                             $smClassSection->section_id = $section;
                             $smClassSection->created_at = YearCheck::getYear() . '-' . date('m-d h:i:s');
-                            $smClassSection->school_id = Auth::user()->school_id;                 
+                            $smClassSection->school_id = $request->school_name;                 
                             $smClassSection->academic_id = getAcademicId();
                             $smClassSection->save();
                         }
@@ -107,15 +116,17 @@ class SmClassController extends Controller
 
         try {
             $classById = SmCLass::find($id);
+            $districts = District::get();
+            $sm_Schools =   SmSchool::get(); 
             $sectionByNames = SmClassSection::select('section_id')->where('class_id', '=', $classById->id)->get();
             $sectionId = array();
             foreach ($sectionByNames as $sectionByName) {
                 $sectionId[] = $sectionByName->section_id;
             }
 
-            $sections = SmSection::where('active_status', '=', 1)->where('created_at', 'LIKE', '%' . $this->date . '%')->where('academic_id', getAcademicId())->where('school_id', Auth::user()->school_id)->get();
+            $sections = SmSection::where('active_status', '=', 1)->where('created_at', 'LIKE', '%' . $this->date . '%')->where('academic_id', getAcademicId())->get();
 
-            $classes = SmClass::where('active_status', '=', 1)->orderBy('id', 'desc')->where('academic_id', getAcademicId())->where('school_id', Auth::user()->school_id)->get();
+            $classes = SmClass::where('active_status', '=', 1)->orderBy('id', 'desc')->where('academic_id', getAcademicId())->where('school_id', $classById->school_id)->get();
 
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];
@@ -126,7 +137,7 @@ class SmClassController extends Controller
                 return ApiBaseMethod::sendResponse($data, null);
             }
 
-            return view('backEnd.academics.class', compact('classById', 'classes', 'sections', 'sectionId'));
+            return view('backEnd.academics.class', compact('classById', 'classes', 'sections', 'sectionId','districts','sm_Schools'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
@@ -156,6 +167,8 @@ class SmClassController extends Controller
         try {
             $class = SmCLass::find($request->id);
             $class->class_name = $request->name;
+            $class->district_idFk = $request->district_name;
+            $class->school_id = $request->school_name;
             $class->save();
             $class->toArray();
             try {
@@ -166,7 +179,7 @@ class SmClassController extends Controller
                     $smClassSection->class_id = $class->id;
                     $smClassSection->section_id = $section;
                     $smClassSection->created_at = YearCheck::getYear() . '-' . date('m-d h:i:s');
-                    $smClassSection->school_id = Auth::user()->school_id;
+                    $smClassSection->school_id = $request->school_name;
                     $smClassSection->academic_id = getAcademicId();
                     $smClassSection->save();
                 }
