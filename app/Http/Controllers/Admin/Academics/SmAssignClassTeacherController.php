@@ -121,6 +121,7 @@ class SmAssignClassTeacherController extends Controller
     {
 
         try {
+            $districts = District::get();
             $classes = SmClass::get();
             $teachers = SmStaff::status()->where('role_id', 4)->get();
             $assign_class_teachers = SmAssignClassTeacher::with('class', 'section', 'classTeachers')->where('active_status', 1)->where('academic_id', getAcademicId())->where('school_id', Auth::user()->school_id)->get();
@@ -142,7 +143,7 @@ class SmAssignClassTeacherController extends Controller
                 $data['teacherId'] = $teacherId;
                 return ApiBaseMethod::sendResponse($data, null);
             }
-            return view('backEnd.academics.assign_class_teacher', compact('assign_class_teacher', 'classes', 'teachers', 'assign_class_teachers', 'sections', 'teacherId'));
+            return view('backEnd.academics.assign_class_teacher', compact('assign_class_teacher', 'classes', 'teachers', 'assign_class_teachers', 'sections', 'teacherId','districts'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
@@ -177,6 +178,8 @@ class SmAssignClassTeacherController extends Controller
             $assign_class_teacher->class_id = $request->class;
             $assign_class_teacher->academic_id = getAcademicId();
             $assign_class_teacher->section_id = $request->section;
+            $assign_class_teacher->district_idFk = $request->district_name;
+            $assign_class_teacher->school_id = $request->school_name;
             $assign_class_teacher->save();
             $assign_class_teacher_collection = $assign_class_teacher;
             $assign_class_teacher->toArray();
@@ -185,7 +188,8 @@ class SmAssignClassTeacherController extends Controller
                 $class_teacher = new SmClassTeacher();
                 $class_teacher->assign_class_teacher_id = $assign_class_teacher->id;
                 $class_teacher->teacher_id = $teacher;
-                $class_teacher->school_id = Auth::user()->school_id;
+                $class_teacher->district_idFk = $request->district_name;
+                $class_teacher->school_id = $request->school_name;
                 $class_teacher->academic_id = getAcademicId();
                 $class_teacher->save();
                 event(new ClassTeacherGetAllStudent($assign_class_teacher_collection, $class_teacher, 'update'));
