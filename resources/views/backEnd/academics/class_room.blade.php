@@ -85,6 +85,53 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row mt-40">
+                            <div class="col-lg-12">
+                                <div class="input-effect">
+                                     <select name="district_name" onchange="get_school_info(this);" class="niceSelect w-100 bb form-control {{ $errors->has('district_name') ? ' is-invalid' : '' }}" id="district_name">
+                                        <option data-display="@lang('select district *')" value="{{old('district_name')}}">@lang('district')<span>*</span></option>
+                                         @foreach($districts as $district)
+                                          
+                                            <option value="{{$district->district_id}}" {{ (old("district_name") ==  $district->district_id? "selected":"") }} @if(isset($class_room->district_idFk) && $class_room->district_idFk == $district->district_id) {{"selected"}} @endif>{{$district->district_name}} </option>
+                                             
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('district_name'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('district_name') }}</strong>
+                                    </span>
+                                    @endif
+
+                                 </div>
+                    </div>
+                </div>
+                    <div class="row mt-40">
+                            <div class="col-lg-12 school_information">
+                     
+                                <div class="input-effect">
+                                     <select name="school_name" class="nice-select   w-100 bb form-control school_data {{ $errors->has('school_name') ? ' is-invalid' : '' }}" id="school_name" style="color: #828bb2;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;">
+                                    <option data-display="@lang('select school')" value="{{old('school_name')}}">@lang('select school')<span>*</span></option>
+                                        @if(isset($class_room->school_id))
+                                        @foreach($sm_Schools as $school)
+                                    <option value="{{$school->id}}" @if($class_room->school_id == $school->id) {{"selected"}} @endif >{{$school->school_name}}</option>
+                                        @endforeach
+                                        @endif
+                                         
+                                    </select>
+                                    @if ($errors->has('school_name'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('school_name') }}</strong>
+                                    </span>
+                                    @endif
+
+                                 </div>
+                    </div> 
+                </div><br>
+                    <br>
+                    <br>
                                 @php 
                                   $tooltip = "";
                                   if(userPermission(270)){
@@ -191,3 +238,38 @@
     </div>
 </section>
 @endsection
+<script type="text/javascript">
+        function get_school_info(sel)  
+    {
+        var id = sel.value;
+          
+     $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+    });
+     $.ajax({
+      type : "POST",
+       url: '<?=route("districtWischool")?>',
+      dataType : "JSON",
+      data : {id:id},
+      success: function(data){
+        $('.school_data').html('');
+
+       var len = data.length;  
+       for (var i = 0; i < len; i++) {
+                        var id = data[i]['id'];
+                        var name = data[i]['school_name'];
+                        
+                        $('.school_data').append($('<option>',
+                         {
+                            value: id,
+                            text : name 
+                        }));
+                    }
+        
+        // alert(data[0].school_name)
+      }
+    }); 
+    }
+    </script>
