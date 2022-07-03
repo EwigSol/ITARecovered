@@ -1,9 +1,9 @@
-# /vendor/
+/vendor/
 node_modules/
 npm-debug.log
 yarn-error.log
 
-Laravel 4 specific
+# Laravel 4 specific
 bootstrap/compiled.php
 app/storage/
 
@@ -21,11 +21,3 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
-package-lock.json
-package.json
-composer.json
-composer.lock
-phpunit.xml
-server.php
-webpack.mix.js
-version.php

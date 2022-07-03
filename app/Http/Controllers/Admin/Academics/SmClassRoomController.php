@@ -11,7 +11,8 @@ use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Admin\Academics\SmClassRoomRequest;
-
+use App\Models\District;
+use App\SmSchool;
 class SmClassRoomController extends Controller
 {
 
@@ -25,12 +26,15 @@ class SmClassRoomController extends Controller
     {
 
         try {
-            $class_rooms = SmClassRoom::where('active_status', 1)->where('school_id',Auth::user()->school_id)->get();
+            $districts = District::get();
+       
+            $class_rooms = SmClassRoom::where('active_status', 1)->where('created_by',Auth::user()->id)->get();
 
+ 
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 return ApiBaseMethod::sendResponse($class_rooms, null);
             }
-            return view('backEnd.academics.class_room', compact('class_rooms'));
+            return view('backEnd.academics.class_room', compact('class_rooms','districts'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
@@ -54,7 +58,8 @@ class SmClassRoomController extends Controller
             $class_room = new SmClassRoom();
             $class_room->room_no = $request->room_no;
             $class_room->capacity = $request->capacity;
-            $class_room->school_id = Auth::user()->school_id;
+            $class_room->district_idFk = $request->district_name;
+            $class_room->school_id = $request->school_name;
             $class_room->academic_id = getAcademicId();
             $result = $class_room->save();
 
@@ -78,8 +83,10 @@ class SmClassRoomController extends Controller
 
 
         try {
+            $districts = District::get();
+            $sm_Schools  = SmSchool::get();
             $class_room = SmClassRoom::find($id);
-            $class_rooms = SmClassRoom::where('active_status', 1)->where('school_id',Auth::user()->school_id)->get();
+            $class_rooms = SmClassRoom::where('active_status', 1)->where('created_by',Auth::user()->id)->get();
 
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];
@@ -88,7 +95,7 @@ class SmClassRoomController extends Controller
                 return ApiBaseMethod::sendResponse($data, null);
             }
 
-            return view('backEnd.academics.class_room', compact('class_room', 'class_rooms'));
+            return view('backEnd.academics.class_room', compact('class_room', 'class_rooms','districts','sm_Schools'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
@@ -105,6 +112,8 @@ class SmClassRoomController extends Controller
             $class_room = SmClassRoom::find($request->id);
             $class_room->room_no = $request->room_no;
             $class_room->capacity = $request->capacity;
+            $class_room->district_idFk = $request->district_name;
+            $class_room->school_id = $request->school_name;
             $result = $class_room->save();
 
             Toastr::success('Operation successful', 'Success');

@@ -179,7 +179,7 @@ class SmStudentAjaxController extends Controller
     public function ajaxStudentPromoteSection(Request $request)
     {
         // $sectionIds = SmClassSection::where('class_id', '=', $request->id)->get();
-        if (teacherAccess()) {
+        if (teacherAccess()) {  
             $sectionIds = SmAssignSubject::where('class_id', '=', $request->id)
             ->where('teacher_id', Auth::user()->staff->id)
             ->where('school_id', Auth::user()->school_id)
@@ -187,9 +187,10 @@ class SmStudentAjaxController extends Controller
             ->groupby(['class_id','section_id'])
             ->withoutGlobalScope(StatusAcademicSchoolScope::class)
             ->get();
-        } else {
+        } else { 
+            $classById = SmCLass::find($request->id);  
             $sectionIds = SmClassSection::where('class_id', '=', $request->id)
-            ->where('school_id', Auth::user()->school_id)->withoutGlobalScope(StatusAcademicSchoolScope::class)->get();
+            ->where('school_id', $classById->school_id)->withoutGlobalScope(StatusAcademicSchoolScope::class)->get();
         }
         $promote_sections = [];
         foreach ($sectionIds as $sectionId) {
