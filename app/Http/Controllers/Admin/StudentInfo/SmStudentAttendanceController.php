@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\StudentAttendanceImport;
 use App\Http\Requests\Admin\StudentInfo\SmStudentAttendanceSearchRequest;
-
+use App\Models\District;
 class SmStudentAttendanceController extends Controller
 {
     public function __construct()
@@ -35,11 +35,13 @@ class SmStudentAttendanceController extends Controller
             if (teacherAccess()) {
                  $teacher_info=SmStaff::where('user_id',auth()->user()->id)->first();
                  $classes = $teacher_info->classes;
+                 $districts = District::get();
             } else {
                  $classes = SmClass::get();
+                 $districts = District::get();
             }
-
-            return view('backEnd.studentInformation.student_attendance', compact('classes'));
+ 
+            return view('backEnd.studentInformation.student_attendance', compact('classes','districts'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
@@ -56,12 +58,18 @@ class SmStudentAttendanceController extends Controller
             if (teacherAccess()) {
                 $teacher_info=SmStaff::where('user_id',auth()->user()->id)->first();
                 $classes = $teacher_info->classes;
+                $districts = District::get();
             } else {
                 $classes = SmClass::get();
+                $districts = District::get();
             }
-            $students = SmStudent::with('DateWiseAttendances')->where('class_id', $request->class)->where('section_id', $request->section)
-            ->get(['id','admission_no','first_name','last_name','roll_no']);
-
+ 
+            $students = SmStudent::with('DateWiseAttendances')->where('class_id', $request->class)
+            ->where('section_id', $request->section)
+            ->where('district_idFk', $request->district_name)
+            ->where('school_id', $request->school_name)
+            ->get(['id','admission_no','first_name','last_name','roll_no']);  
+ 
             if ($students->isEmpty()) {
                 Toastr::error('No Result Found', 'Failed');
                 return redirect('student-attendance');
@@ -77,7 +85,7 @@ class SmStudentAttendanceController extends Controller
             $search_info['date'] = $request->attendance_date;
             $sections = SmClassSection::with('sectionName')->where('class_id', $request->class)->get();
 
-            return view('backEnd.studentInformation.student_attendance', compact('classes','sections','class_id','section_id','date','students', 'attendance_type', 'search_info'));
+            return view('backEnd.studentInformation.student_attendance', compact('classes','sections','class_id','section_id','date','students', 'attendance_type', 'search_info','districts'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();

@@ -26,6 +26,8 @@ class SmStudentAttendanceSearchRequest extends FormRequest
         return [
             'class' => 'required|integer',
             'section'=>'required|integer',
+            'district_name'=>'required',
+            'school_name' => 'required',
             'attendance_date' => 'required|date'
         ];
     }
