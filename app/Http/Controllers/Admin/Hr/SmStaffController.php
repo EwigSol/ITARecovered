@@ -34,6 +34,8 @@ use Modules\RolePermission\Entities\InfixRole;
 use App\Models\District; 
 use App\Models\Program; 
 use App\SmSchool;
+use App\SmSection;
+use App\SmClassSection;
 class SmStaffController extends Controller
 {
     use CustomFields;
@@ -1024,4 +1026,27 @@ class SmStaffController extends Controller
 
         return response()->json($data);
     }
+    public function districtWisesection(Request $request){
+         
+        $data = SmSection::where('school_id',$request->id)->get();
+
+        return response()->json($data);
+    }
+    // public function districtWiseEditsection(Request $request){
+         
+         
+    //     $sectionByNames = SmClassSection::Leftjoin('sm_sections','section_id','sm_sections.id')
+    //     ->where('sm_class_sections.section_id','=',3)->where('sm_class_sections.school_id', '=', $request->id)->get();   
+    //     dd($sectionByNames); 
+    //     $sectionId = $data = array();
+    //         foreach ($sectionByNames as $sectionByName) {
+    //             $sectionId[] = $sectionByName->section_id;
+    //         }
+           
+    //         foreach ($sectionId as  $sec) { 
+    //             $data[] = SmSection::where('school_id',$sec)->get();   
+    //         }
+    //   dd($data);
+    //     return response()->json($data);
+    // }
 }

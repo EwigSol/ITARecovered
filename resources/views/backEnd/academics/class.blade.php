@@ -70,32 +70,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mt-30">
-                                        <div class="col-lg-12">
-                                            <label>@lang('common.section')*</label><br>
-                                            @foreach($sections as $section)
-                                                <div class="">
-                                                    @if(isset($sectionId))
-                                                        <input type="checkbox" id="section{{@$section->id}}"
-                                                               class="common-checkbox form-control{{ @$errors->has('section') ? ' is-invalid' : '' }}"
-                                                               name="section[]"
-                                                               value="{{@$section->id}}" {{in_array(@$section->id, @$sectionId)? 'checked': ''}}>
-                                                        <label for="section{{@$section->id}}">@lang('common.section') {{@$section->section_name}}</label>
-                                                    @else
-                                                        <input type="checkbox" id="section{{@$section->id}}"
-                                                               class="common-checkbox form-control{{ @$errors->has('section') ? ' is-invalid' : '' }}"
-                                                               name="section[]" value="{{@$section->id}}">
-                                                        <label for="section{{@$section->id}}">@lang('common.section') {{@$section->section_name}}</label>
-                                                    @endif
-                                                </div>
-                                            @endforeach
-                                            @if($errors->has('section'))
-                                                <span class="text-danger validate-textarea-checkbox" role="alert">
-                                                <strong>{{ @$errors->first('section') }}</strong>
-                                            </span>
-                                            @endif
-                                        </div>
-                                    </div>
+                                    
                                      <div class="row mt-30">
                             <div class="col-lg-12">
                                 <div class="input-effect">
@@ -120,7 +95,7 @@
                             <div class="col-lg-12 school_information">
                      
                                 <div class="input-effect">
-                                     <select name="school_name" class="nice-select   w-100 bb form-control school_data {{ $errors->has('school_name') ? ' is-invalid' : '' }}" id="school_name" style="color: #828bb2;
+                                     <select name="school_name" onchange="get_section_info(this);" class="nice-select   w-100 bb form-control school_data {{ $errors->has('school_name') ? ' is-invalid' : '' }}" id="school_name" style="color: #828bb2;
     font-size: 12px;
     font-weight: 500;
     text-transform: uppercase;">
@@ -140,9 +115,23 @@
 
                                  </div>
                     </div> 
-                </div><br>
-                    <br>
-                    <br>
+                </div> 
+                     
+                    <div class="row mt-30">
+                                        <div class="col-lg-12">
+                                            <label>@lang('common.section')*</label><br>
+                                            
+                                                    
+                                                        <div class="section_data"></div>
+                                                    
+                                                </div>
+                                          
+                                            @if($errors->has('section'))
+                                                <span class="text-danger validate-textarea-checkbox" role="alert">
+                                                <strong>{{ @$errors->first('section') }}</strong>
+                                            </span>
+                                            @endif
+                                        </div>
                                     @php
                                         $tooltip = "";
                                         if(userPermission(266)){
@@ -227,6 +216,7 @@
                                         </td>
                                     </tr>
 
+
                                     <div class="modal fade admin-query" id="deleteClassModal{{@$class->id}}">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
@@ -265,38 +255,125 @@
         </div>
     </section>
 @endsection
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script>
+    $( document ).ready(function() {
+        var school_id = $('.school_data').val();
+
+        get_section_edit_info(school_id);
+    });
+ </script>
 <script type="text/javascript">
-        function get_school_info(sel)  
+ 
+    
+ 
+    
+ 
+function get_school_info(sel)  
     {
         var id = sel.value;
           
-     $.ajaxSetup({
+    $.ajaxSetup({
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
     });
-     $.ajax({
-      type : "POST",
-       url: '<?=route("districtWischool")?>',
-      dataType : "JSON",
-      data : {id:id},
-      success: function(data){
-        $('.school_data').html('');
-
-       var len = data.length;  
-       for (var i = 0; i < len; i++) {
+        $.ajax({
+        type : "POST",
+        url: '<?=route("districtWischool")?>',
+        dataType : "JSON",
+        data : {id:id},
+        success: function(data){
+        $('.school_data').html('<option>select school</option>');
+        $('.section_data').html('');
+        var len = data.length;  
+            for (var i = 0; i < len; i++) {
                         var id = data[i]['id'];
                         var name = data[i]['school_name'];
-                        
+             
                         $('.school_data').append($('<option>',
                          {
                             value: id,
                             text : name 
                         }));
-                    }
+            }
         
         // alert(data[0].school_name)
       }
     }); 
+}
+
+function get_section_info(sel)  
+    {
+        var id = sel.value;
+     $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
-    </script>
+    });
+    $.ajax({
+        type : "POST",
+        url: '<?=route("districtWisesection")?>',
+        dataType : "JSON",
+        data : {id:id},
+        success: function(data){
+        $('.section_data').html('');
+
+        var len = data.length;  
+            for (var i = 0; i < len; i++) {
+                            var id = data[i]['id'];
+                            var name = data[i]['section_name'];
+                            
+                            // $('.section_data').append($('<option>',
+                            //  {
+                            //     value: id,
+                            //     text : name 
+                            // }));
+                            $('.section_data').append('<input type="checkbox" id="section'+id+'"'+
+                                                                   'class="common-checkbox  form-control"'+
+                                                                   'name="section[]" value="'+id+'">'+
+                                                            '<label for="section'+id+'">'+name+' section<span  ></span>  </label>');
+            }
+        
+        // alert(data[0].school_name)
+      }
+    }); 
+}
+function get_section_edit_info(sel)  
+    {
+        var id = sel; 
+         
+     $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+    });
+    $.ajax({
+        type : "POST",
+        url: '<?=route("districtWisesection")?>',
+        dataType : "JSON",
+        data : {id:id},
+        success: function(data){
+        $('.section_data').html('');
+
+        var len = data.length;  
+            for (var i = 0; i < len; i++) {
+                            var id = data[i]['id'];
+                            var name = data[i]['section_name'];
+                            
+                            // $('.section_data').append($('<option>',
+                            //  {
+                            //     value: id,
+                            //     text : name 
+                            // }));
+                            $('.section_data').append('<input type="checkbox"  checked id="section'+id+'"'+
+                                                                   'class="common-checkbox  form-control"'+
+                                                                   'name="section[]" value="'+id+'">'+
+                                                            '<label for="section'+id+'">'+name+' section<span  ></span>  </label>');
+            }
+        
+        // alert(data[0].school_name)
+      }
+    }); 
+}    
+</script>
