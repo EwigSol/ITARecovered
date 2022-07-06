@@ -118,12 +118,12 @@ class SmClassController extends Controller
             $classById = SmCLass::find($id);
             $districts = District::get();
             $sm_Schools =   SmSchool::get(); 
-            $sectionByNames = SmClassSection::select('section_id')->where('class_id', '=', $classById->id)->get();
+            $sectionByNames = SmClassSection::select('section_id')->where('class_id', '=', $classById->id)->get();     
             $sectionId = array();
             foreach ($sectionByNames as $sectionByName) {
                 $sectionId[] = $sectionByName->section_id;
             }
-
+ 
             $sections = SmSection::where('active_status', '=', 1)->where('created_at', 'LIKE', '%' . $this->date . '%')->where('academic_id', getAcademicId())->get();
 
             $classes = SmClass::where('active_status', '=', 1)->orderBy('id', 'desc')->where('academic_id', getAcademicId())->where('school_id', $classById->school_id)->get();
@@ -173,7 +173,7 @@ class SmClassController extends Controller
             $class->toArray();
             try {
              
-
+ 
                 foreach ($request->section as $section) {
                     $smClassSection = new SmClassSection();
                     $smClassSection->class_id = $class->id;
