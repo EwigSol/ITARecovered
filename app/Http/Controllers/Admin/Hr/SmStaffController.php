@@ -36,6 +36,7 @@ use App\Models\Program;
 use App\SmSchool;
 use App\SmSection;
 use App\SmClassSection;
+use App\SmClass;
 class SmStaffController extends Controller
 {
     use CustomFields;
@@ -1032,6 +1033,13 @@ class SmStaffController extends Controller
 
         return response()->json($data);
     }
+    public function schoolwiseclass(Request $request){
+         
+        $data = SmClass::where('school_id',$request->id)->get();
+
+        return response()->json($data);
+    }
+    
     // public function districtWiseEditsection(Request $request){
          
          

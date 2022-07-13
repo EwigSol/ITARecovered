@@ -5582,10 +5582,10 @@
     });
 
     // academic year wise get class
-    $(document).ready(function() {
+    $(document).ready(function() { 
         $("#academic_year").on(
             "change",
-            function() {
+            function() {  
                 var url = $("#url").val();
                 var i = 0;
                 var formData = {
@@ -5644,7 +5644,7 @@
     $(document).ready(function() {
         $("form#student_form #academic_year, form#infix_form #academic_year").on(
             "change",
-            function() {
+            function() {  
                 var url = $("#url").val();
                 var i = 0;
                 var formData = {

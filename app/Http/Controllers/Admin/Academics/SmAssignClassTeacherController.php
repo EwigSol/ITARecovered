@@ -33,7 +33,7 @@ class SmAssignClassTeacherController extends Controller
             $classes = SmClass::get();
             $teachers = SmStaff::status()->where('role_id', 4)->get();
             $assign_class_teachers = SmAssignClassTeacher::with('class', 'section', 'classTeachers')->status()->orderBy('class_id', 'ASC')->orderBy('section_id', 'ASC')->get();
-
+ 
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];
                 $data['classes'] = $classes->toArray();
