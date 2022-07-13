@@ -1376,7 +1376,7 @@ if (!function_exists('systemLanguage')) {
 
 if (!function_exists('academicYears')) {
     function academicYears()
-    {
+    {  
         if (session()->has('academic_years')) {
             return session()->get('academic_years');
         } else {

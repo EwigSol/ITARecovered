@@ -5582,17 +5582,99 @@
     });
 
     // academic year wise get class
+    function get_classes_by_year() { 
+        if ($("#academic_year").val() == '') {
+            $("#classSelectStudent").html(
+                $("<option>", {
+                    value: '',
+                    text: 'Select Class',
+                })
+            );
+            return;
+        }
+          var url = $("#url").val();
+                var i = 0;
+                var formData = {
+                    id: $("#academic_year").val(),
+                };
+                
+ 
+                // get section for student
+                $.ajax({
+                    type: "GET",
+                    data: formData,
+                    dataType: "json",
+                    url: url + "/" + "academic-year-get-class",
+
+                    beforeSend: function() {
+                        $('#select_class_loader').addClass('pre_loader');
+                        $('#select_class_loader').removeClass('loader');
+                    },
+
+                    success: function(data) {
+                        $("#classSelectStudent").empty().append(
+                            $("<option>", {
+                                value:  '',
+                                text: window.jsLang('select_class') + ' *',
+                            })
+                        );
+
+                        if (data[0].length) {
+                            $.each(data[0], function(i, className) {
+                                $("#classSelectStudent").append(
+                                    $("<option>", {
+                                        value: className.id,
+                                        text: className.class_name,
+                                    })
+                                );
+                            });
+                        } 
+                        $('#classSelectStudent').niceSelect('update');
+                        $('#classSelectStudent').trigger('change');
+                    },
+                    error: function(data) {
+                        console.log('Error:', data);
+                    },
+                    complete: function() {
+                        i--;
+                        if (i <= 0) {
+                            $('#select_class_loader').removeClass('pre_loader');
+                            $('#select_class_loader').addClass('loader');
+                        }
+                    }
+                });
+                
+    }
+
+    $("#academic_year").bind({'change':function(){
+       get_classes_by_year()
+    }
+});
+    $("#academic_year").trigger('change');
+    triggerEvent($("#academic_year"), 'change');
+
     $(document).ready(function() {
+        
+
         $("#academic_year").on(
             "change",
             function() {
+                if ($(this).val() == '') {
+                    $("#classSelectStudent").html(
+                        $("<option>", {
+                            value: '',
+                            text: 'Select Class',
+                        })
+                    ); 
+                    return;
+                }
                 var url = $("#url").val();
                 var i = 0;
                 var formData = {
                     id: $(this).val(),
                 };
                 
-
+ 
                 // get section for student
                 $.ajax({
                     type: "GET",
@@ -5640,6 +5722,7 @@
             }
         );
     });
+     
     // student section select sction for sibling
     $(document).ready(function() {
         $("form#student_form #academic_year, form#infix_form #academic_year").on(

@@ -47,10 +47,11 @@ class SmStudentAdmissionController extends Controller
     }
     public function index()
     {
-
+ 
         try {
             $user = Auth::user();
             $role_id = $user->role_id;
+            $academicYears = academicYears(); 
             if (moduleStatusCheck('SaasSubscription') == true && moduleStatusCheck('Saas') == true) {
 
                 $active_student = SmStudent::where('school_id', Auth::user()->school_id)->where('active_status', 1)->count();
@@ -87,7 +88,7 @@ class SmStudentAdmissionController extends Controller
             }
             $sm_stuff=$sm_stuff->get();
             $programs = Program::get();
-            return view('backEnd.studentInformation.student_admission', $data,compact('sm_stuff','role_id','programs'));
+            return view('backEnd.studentInformation.student_admission', $data,compact('sm_stuff','role_id','programs','academicYears'));
 
         } catch (\Exception $e) {
 

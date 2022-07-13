@@ -64,15 +64,14 @@
                                 </div>
                             </div>
                         </div>
- 
-                        <input type="hidden" name="url" id="url" value="{{URL::to('/')}}">
+                         <input type="hidden" name="url" id="url" value="{{URL::to('/')}}">
                         <div class="row mb-40 mt-30">
                             <div class="col-lg-2">
                                 <div class="input-effect sm2_mb_20 md_mb_20">
                                     <select class="niceSelect w-100 bb form-control{{ $errors->has('session') ? ' is-invalid' : '' }}" name="session" id="academic_year">
                                         <option data-display="@lang('common.academic_year') *" value="">@lang('common.academic_year') *</option>
-                                        @foreach($sessions as $session)
-                                        <option value="{{$session->id}}" {{old('session') == $session->id? 'selected': ''}}>{{$session->year}}[{{$session->title}}]</option>
+                                        @foreach($sessions as $session) 
+                                        <option value="{{$session->id}}" {{old('session') == $session->id || $academicYears[0]->id ==$session->id ? 'selected': ''}}>{{$session->year}}[{{$session->title}}]</option>
                                         @endforeach
                                     </select>
                                     <span class="focus-border"></span>
@@ -1308,5 +1307,7 @@
       }
     }); 
     }
+
+ 
 </script>
 @endsection
