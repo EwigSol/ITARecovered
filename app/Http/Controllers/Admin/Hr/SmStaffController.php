@@ -1039,6 +1039,14 @@ class SmStaffController extends Controller
 
         return response()->json($data);
     }
+    public function districtWischoolTeacher(Request $request){
+        
+        // $data = SmClass::where('school_id',$request->id)->get();
+        $data = SmStaff::where('role_id', 4)->where('school_id',$request->id)->get();
+       
+ 
+        return response()->json($data);
+    }
     
     // public function districtWiseEditsection(Request $request){
          
