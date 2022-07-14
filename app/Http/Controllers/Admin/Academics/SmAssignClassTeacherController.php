@@ -51,7 +51,7 @@ class SmAssignClassTeacherController extends Controller
 
     public function store(SmAssignClassTeacherRequest $request)
     {
-
+  
         // if ($validator->fails()) {
         //     if (ApiBaseMethod::checkUrl($request->fullUrl())) {
         //         return ApiBaseMethod::sendError('Validation Error.', $validator->errors());
@@ -64,12 +64,14 @@ class SmAssignClassTeacherController extends Controller
         DB::beginTransaction();
 
         try {
+
             $assigned_class_teacher = SmAssignClassTeacher::where('active_status', 1)
                 ->where('class_id', $request->class)->where('section_id', $request->section)
                 ->where('academic_id', getAcademicId())
                 ->where('school_id', $request->school_name)
                 ->first();
-
+                
+ 
             if (empty($assigned_class_teacher)) {
                 $assign_class_teacher = new SmAssignClassTeacher();
                 $assign_class_teacher->class_id = $request->class;
@@ -81,8 +83,8 @@ class SmAssignClassTeacherController extends Controller
                 $assign_class_teacher_collection = $assign_class_teacher;
                 $assign_class_teacher->toArray();
 
-                foreach ($request->teacher as $teacher) {
-                    $class_teacher = new SmClassTeacher();
+                foreach ($request->teacher as $teacher) {  
+                    $class_teacher = new SmClassTeacher(); 
                     $class_teacher->assign_class_teacher_id = $assign_class_teacher->id;
                     $class_teacher->teacher_id = $teacher;
                     $class_teacher->district_idFk = $request->district_name;

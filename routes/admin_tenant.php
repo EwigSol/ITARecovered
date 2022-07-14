@@ -1327,6 +1327,7 @@ Route::group(['middleware' => ['XSS','subscriptionAccessUrl']], function () {
         Route::post('staff-store', ['as' => 'staffStore', 'uses' => 'Admin\Hr\SmStaffController@staffStore']);
         Route::post('staff-pic-store', ['as' => 'staffPicStore', 'uses' => 'Admin\Hr\SmStaffController@staffPicStore'])->middleware('userRolePermission:163');
         Route::post('districtWischool', ['as' => 'districtWischool', 'uses' => 'Admin\Hr\SmStaffController@districtWischool']);
+        Route::post('districtWischoolTeacher', ['as' => 'districtWischoolTeacher', 'uses' => 'Admin\Hr\SmStaffController@districtWischoolTeacher']);
         Route::post('schoolwiseclass', ['as' => 'schoolwiseclass', 'uses' => 'Admin\Hr\SmStaffController@schoolwiseclass']);
         Route::post('districtWisesection', ['as' => 'districtWisesection', 'uses' => 'Admin\Hr\SmStaffController@districtWisesection']);
         Route::post('districtWiseEditsection', ['as' => 'districtWiseEditsection', 'uses' => 'Admin\Hr\SmStaffController@districtWiseEditsection']);

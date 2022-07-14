@@ -76,7 +76,7 @@
                             <div class="col-lg-12 school_information">
                      
                                 <div class="input-effect">
-                                     <select name="school_name" onchange="get_class_info(this);"  class="nice-select    w-100 bb form-control school_data {{ $errors->has('school_name') ? ' is-invalid' : '' }}" id="school_name" style="color: #828bb2;
+                                     <select name="school_name" onchange="get_class_info(this);get_teacher_info(this);"  class="nice-select    w-100 bb form-control school_data {{ $errors->has('school_name') ? ' is-invalid' : '' }}" id="school_name" style="color: #828bb2;
     font-size: 12px;
     font-weight: 500;
     text-transform: uppercase;">
@@ -181,19 +181,11 @@
                                 <div class="row mt-40">
                                     <div class="col-lg-12">
                                         <label>@lang('academics.teacher') *</label><br>
-                                        @foreach($teachers as $teacher)
-                                        @if(isset($assign_class_teacher))
-                                        <div class="">
-                                            <input type="radio" id="tecaher{{@$teacher->id}}" class="common-checkbox" name="teacher[]" value="{{ @$teacher->id}}" {{in_array($teacher->id, $teacherId)? 'checked':''}}>
-                                            <label for="tecaher{{ @$teacher->id}}">{{ @$teacher->full_name}}</label>
+                                         
+                                        <div class="teacher_name_data" >
+                                           
                                         </div>
-                                        @else
-                                        <div class="">
-                                            <input type="radio" id="tecaher{{@$teacher->id}}" class="common-checkbox" name="teacher[]" value="{{@$teacher->id}}">
-                                            <label for="tecaher{{@$teacher->id}}">{{@$teacher->full_name}}</label>
-                                        </div>
-                                        @endif
-                                        @endforeach
+                                        
 
                                         @if($errors->has('teacher'))
                                             <span class="text-danger validate-textarea-checkbox" role="alert">
@@ -385,6 +377,37 @@
                             value: id,
                             text : name 
                         }));
+                    }
+        
+        // alert(data[0].school_name)
+      }
+    }); 
+    } 
+
+    function get_teacher_info(sel)  
+    {
+        var id = sel.value;
+          
+     $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+    });
+     $.ajax({
+      type : "POST",
+       url: '<?=route("districtWischoolTeacher")?>',
+      dataType : "JSON",
+      data : {id:id},
+      success: function(data){
+        $('.teacher_name_data').html('');
+
+       var len = data.length;  
+       for (var i = 0; i < len; i++) {
+                        var id = data[i]['id'];
+                        var name = data[i]['full_name'];
+                        
+                        $('.teacher_name_data').append(' <input type="radio" id="tecaher_'+id+'" class="common-checkbox" name="teacher[]" value="1">'+
+                                            '<label for="tecaher_'+id+'">'+name+'</label>');
                     }
         
         // alert(data[0].school_name)
