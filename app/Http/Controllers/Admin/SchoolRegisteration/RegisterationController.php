@@ -322,12 +322,26 @@ class RegisterationController extends Controller
             $school->district_idFk = $request->district_name;
             $school->save();
 
-            
+            $List = implode(', ', $request->program_id);  
+ 
+                $program = SchoolProgram::where('school_id',$id)->first();
+                if ($program) {
+                    $program->program_id = $List;
+                    $program->updated_at = date('Y-m-d H:i:s'); 
+                    $program->update();
+                }else{
+                    $program = new SchoolProgram();
+                    $program->school_id = $id;
+                    $program->program_id = $List;
+                    $program->created_at = date('Y-m-d H:i:s'); 
+                    $program->save();
+                }
+                
  
             Toastr::success('Operation successful', 'Success');
             return \Redirect::route('school-view', $id);
         } catch (\Exception $e) {
-            dd($e->getMessage());
+         
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
         }

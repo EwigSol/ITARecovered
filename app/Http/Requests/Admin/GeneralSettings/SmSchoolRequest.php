@@ -30,6 +30,7 @@ class SmSchoolRequest extends FormRequest
             'email' => "required",
             'district_name'   => "required",
             'address' => "required",
+            'program_id' => "required|array",
         ];
     }
 }
