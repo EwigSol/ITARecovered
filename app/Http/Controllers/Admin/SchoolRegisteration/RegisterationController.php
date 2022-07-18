@@ -60,9 +60,10 @@ use App\Http\Requests\Admin\AdminSection\SmAdmissionQueryRequest;
 use App\Http\Requests\Admin\AdminSection\SmAdmissionQuerySearchRequest;
 use App\Http\Requests\Admin\AdminSection\SmAdmissionQueryFollowUpRequest;
 use App\Http\Requests\Admin\GeneralSettings\SmSchoolRequest;
- 
+use App\Models\Program;  
 use App\SmSetupAdmin;
 use App\SmAdmissionQuery;
+use App\SchoolProgram;
 class RegisterationController extends Controller
 {
     public function __construct()
@@ -96,15 +97,16 @@ class RegisterationController extends Controller
     public function createSchool(Request $request,$id=false)
     { 
         try {
-            $editData = SmSchool::leftjoin('districts','district_idFk','district_id')->where('sm_schools.id',$id)->first();   
-            $role_id = auth()->user()->role_id; 
-            $school =  SmSchool::where('id',auth()->user()->school_id)->get();  
+            $program_data='';
+            $editData = SmSchool::leftjoin('districts','district_idFk','district_id')->where('sm_schools.id',$id)->first();     
+            $role_id = auth()->user()->role_id;  
+            $school =  SmSchool::where('id',auth()->user()->school_id)->get();   
             // if ($role_id == 11 || $role_id == 10) { 
             // $districts = District::where('district_id',$school[0]->district_idFk)->get();
             // }else{
                 $districts = District::get();  
             // } 
-            $session_ids = SmAcademicYear::where('school_id', Auth::user()->school_id)->where('active_status', 1)->get();
+            $session_ids = SmAcademicYear::where('school_id', Auth::user()->school_id)->where('active_status', 1)->get(); 
             $dateFormats = SmDateFormat::where('active_status', 1)->get();
             $languages = SmLanguage::all();
             $countries = SmCountry::select('currency')->groupBy('currency')->get();
@@ -112,13 +114,19 @@ class RegisterationController extends Controller
             $academic_years = SmAcademicYear::where('school_id', Auth::user()->school_id)->get();
             $time_zones = SmTimeZone::all();
             $weekends = SmWeekend::where('school_id', Auth::user()->school_id)->get();
-
+            $program = Program::get();
+            $school_program = SchoolProgram::select('program_id')->where('school_id',$id)->first(); 
+            if ($school_program) {
+                  $programs = 'SELECT * FROM `programs` WHERE `p_id` IN ('.$school_program->program_id.')'; 
+                  $program_data = DB::select($programs);   
+              }  
+            
             $sell_heads = SmChartOfAccount::where('active_status', '=', 1)
                 ->where('school_id', Auth::user()->school_id)
                 ->where('type', 'I')
                 ->get();  
             // $districts = District::get();
-
+ 
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];
                 $data['editData'] = $editData;
@@ -129,8 +137,8 @@ class RegisterationController extends Controller
                 $data['currencies'] = $currencies->toArray();
                 $data['academic_years'] = $academic_years->toArray();
                 return ApiBaseMethod::sendResponse($data, 'apply leave');
-            }
-            return view('backEnd.admin.school.registration', compact('editData', 'session_ids', 'dateFormats', 'languages', 'countries', 'currencies', 'academic_years', 'time_zones', 'weekends', 'sell_heads','districts','role_id'));
+            } 
+            return view('backEnd.admin.school.registration', compact('editData', 'session_ids', 'dateFormats', 'languages', 'countries', 'currencies', 'academic_years', 'time_zones', 'weekends', 'sell_heads','districts','role_id','program','program_data','school_program'));
         } catch (\Exception $e) {
 
             Toastr::error('Operation Failed', 'Failed');
@@ -143,7 +151,7 @@ class RegisterationController extends Controller
         try {
             
           
-
+ 
             $school = new SmSchool();
             
             $school->school_name = $request->school_name;
@@ -154,8 +162,16 @@ class RegisterationController extends Controller
             $school->district_idFk = $request->district_name;
 
             $school->save();
-
+            $List = implode(', ', $request->program_id);  
+ 
+                $program = new SchoolProgram();
+                $program->school_id = $school->id;
+                $program->program_id = $List;
+                $program->created_at = date('Y-m-d H:i:s'); 
+                $program->save();
+        
             
+
             
             Toastr::success('Operation successful', 'Success');
             return \Redirect::route('school-view', $school->id);
@@ -171,8 +187,17 @@ class RegisterationController extends Controller
          
         try {
 
+            $program_data = '';
+            $editData = SmSchool::leftjoin('districts','district_idFk','district_id')
+            ->where('sm_schools.id',$id)->first();  
+            $school_program = SchoolProgram::select('program_id')->where('school_id',$id)->first();   
+            // $programs = Program::whereIn($school_program->program_id)->get();
+            if ($school_program) {
+                $programs = 'SELECT * FROM `programs` WHERE `p_id` IN ('.$school_program->program_id.')';
+                $program_data = DB::select($programs);
+            }
+            
 
-            $editData = SmSchool::leftjoin('districts','district_idFk','district_id')->where('sm_schools.id',$id)->first();   
             $session = SmGeneralSettings::join('sm_academic_years', 'sm_academic_years.id', '=', 'sm_general_settings.session_id')->find($id);   
  
             // return $editData;
@@ -180,7 +205,7 @@ class RegisterationController extends Controller
 
                 return ApiBaseMethod::sendResponse($editData, null);
             }
-            return view('backEnd.admin.school.view', compact('editData', 'session','id'));
+            return view('backEnd.admin.school.view', compact('editData', 'session','id','program_data'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();

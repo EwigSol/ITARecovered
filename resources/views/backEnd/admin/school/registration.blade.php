@@ -133,31 +133,59 @@
                                     @endif
 
                                  </div>
-                    </div>
-                        
+                            </div>
+                      @if($program_data!='')
                         <!-- <div class="col-lg-3">
                                 <div class="input-effect">
-                                     <select name="district_name" onchange="get_school(this);" class="niceSelect w-100 bb form-control {{ $errors->has('district_name') ? ' is-invalid' : '' }}" id="district_name">
-                                        <option data-display="@lang('select district')" value="">@lang('district')</option>
-                                        @if(isset($editData))
-                                            <option value="{{!empty($editData->district_id)??''}}" selected="selected">{{!empty($editData->district_name)??''}} </option>
-                                        @else
-                                            @foreach($districts as $district)
-                                            <option value="{{$district->district_id}}">{{$district->district_name}} </option>
-                                             @endforeach
-                                        @endif
-
+                                     <select name="program_id[]" class="nice-select   w-100 bb form-control program_id {{ $errors->has('program_id') ? ' is-invalid' : '' }}" multiple="multiple" id="program_id" style="color: #828bb2;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;">
+                                        <option data-display="@lang('select program')" place value="{{old('program_id')}}">@lang('select programs')<span>*</span></option>
+                                        
+                                            @foreach($program as $programs)
+                                            
+                                            @foreach($program_data as $data)
+                                            <option value="{{$programs->p_id}}" {{(isset($data->p_id) && $data->p_id ==  $programs->p_id? "selected":"")}} >{{$programs->p_name}} 
+                                            </option>
+                                            @endforeach
+                                            @endforeach
+                                        
                                     </select>
-                                    @if ($errors->has('district_name'))
+                                    @if ($errors->has('program_id'))
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('district_name') }}</strong>
+                                        <strong>{{ $errors->first('program_id') }}</strong>
                                     </span>
-                                    @endif
-
+                                     @endif
                                  </div>
-                    </div> -->
-
+                            </div> -->
+                            @else
+                            <div class="col-lg-3">
+                                <div class="input-effect">
+                                     <select name="program_id[]" class="nice-select   w-100 bb form-control program_id {{ $errors->has('program_id') ? ' is-invalid' : '' }}" multiple="multiple" id="program_id" style="color: #828bb2;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;">
+                                        <option data-display="@lang('select program')" place value="{{old('program_id')}}">@lang('select programs')<span>*</span></option>
+                                        
+                                            @foreach($program as $programs)
+ 
+                                            <option value="{{$programs->p_id}}" >{{$programs->p_name}} 
+                                            </option>
+ 
+                                            @endforeach
+                                        
+                                    </select>
+                                    @if ($errors->has('program_id'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('program_id') }}</strong>
+                                    </span>
+                                     @endif
+                                 </div>
+                            </div>
+                            @endif
                         </div>
+                        
 
                         
                     
@@ -205,7 +233,10 @@
         </div>
     </div>
 </div>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+
     $(document).on('click', '.layout_image', function(){
         // $('.question_image_url').src(this.src);
         $('.question_image_url').attr('src',this.src);   
@@ -214,6 +245,15 @@
 
     $('#fees_enable').change(function() {
         $('#newFees').modal('show');
+    });
+    $( document ).ready(function() {
+      $("#program_id").select2({
+        columns: 1,
+        placeholder: 'Select Programs',
+        search: true,
+        selectAll: true,
+        // maximumSelectionLength: 2
+      });
     });
 </script>
 @endsection

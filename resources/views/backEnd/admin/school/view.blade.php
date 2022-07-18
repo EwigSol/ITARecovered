@@ -284,6 +284,24 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="single-meta">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="name">
+                                                @lang('Program')
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="value text-left">
+                                                @if($program_data != '')
+                                                @foreach($program_data as $data)
+                                                {{$data->p_name}},
+                                                @endforeach
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                <!--  <div class="single-meta">
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6">
