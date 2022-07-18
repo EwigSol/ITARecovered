@@ -134,32 +134,7 @@
 
                                  </div>
                             </div>
-                      @if($program_data!='')
-                        <!-- <div class="col-lg-3">
-                                <div class="input-effect">
-                                     <select name="program_id[]" class="nice-select   w-100 bb form-control program_id {{ $errors->has('program_id') ? ' is-invalid' : '' }}" multiple="multiple" id="program_id" style="color: #828bb2;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;">
-                                        <option data-display="@lang('select program')" place value="{{old('program_id')}}">@lang('select programs')<span>*</span></option>
-                                        
-                                            @foreach($program as $programs)
-                                            
-                                            @foreach($program_data as $data)
-                                            <option value="{{$programs->p_id}}" {{(isset($data->p_id) && $data->p_id ==  $programs->p_id? "selected":"")}} >{{$programs->p_name}} 
-                                            </option>
-                                            @endforeach
-                                            @endforeach
-                                        
-                                    </select>
-                                    @if ($errors->has('program_id'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('program_id') }}</strong>
-                                    </span>
-                                     @endif
-                                 </div>
-                            </div> -->
-                            @else
+                   
                             <div class="col-lg-3">
                                 <div class="input-effect">
                                      <select name="program_id[]" class="nice-select   w-100 bb form-control program_id {{ $errors->has('program_id') ? ' is-invalid' : '' }}" multiple="multiple" id="program_id" style="color: #828bb2;
@@ -183,7 +158,7 @@
                                      @endif
                                  </div>
                             </div>
-                            @endif
+                            
                         </div>
                         
 
