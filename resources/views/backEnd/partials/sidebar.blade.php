@@ -8,7 +8,7 @@
             @if(isset($school_config->logo))
                 <img src="{{ asset($school_config->logo)}}" alt="logo">
             @else
-                <img src="{{ asset('public/uploads/settings/logo.png')}}" alt="logo">
+                <img src="{{ asset('public/uploads/settings/cffff63511b55fd4ffeff5fc10f502fc.png')}}" alt="logo">
             @endif
         </a>
         <a id="close_sidebar" class="d-lg-none">
