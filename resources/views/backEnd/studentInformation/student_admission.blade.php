@@ -54,9 +54,9 @@
                                     @endif 
                                     @endforeach
                                 @endif
-                                @if ($errors->any())
+                             <!--    @if ($errors->any())
                                      <div class="error text-danger ">{{ 'Something went wrong, please try again' }}</div>
-                                @endif
+                                @endif -->
                             </div>
                             <div class="col-lg-12">
                                 <div class="main-title">

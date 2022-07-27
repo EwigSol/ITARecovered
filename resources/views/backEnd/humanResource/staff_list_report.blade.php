@@ -101,8 +101,6 @@ input:checked + .slider:before {
                 </a>
             </div>
             @endif
-            <a href="{{ url('/') }}/staff_directory_listing/xlsx" class="btn btn-success">Export to .xlsx</a>
-<a href="{{ url('/') }}/staff_directory_listing/xls" class="btn btn-primary">Export to .xls</a>
         </div>
       
         <div class="row">

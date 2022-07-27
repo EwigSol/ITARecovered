@@ -611,6 +611,11 @@
                                         <a href="{{route('staff_directory')}}"> @lang('hr.staff_directory')</a>
                                     </li>
                                 @endif
+                               <!--  @if(userPermission(161) && menuStatus(161))
+                                    <li data-position="{{menuPosition(161)}}">
+                                        <a href="{{route('staff_directory_listing')}}"> @lang('hr.staff_direy_listing')</a>
+                                    </li>
+                                @endif -->
                                 @if(userPermission(165) && menuStatus(162))
                                     <li data-position="{{menuPosition(165)}}">
                                         <a href="{{route('staff_attendance')}}"> @lang('hr.staff_attendance')</a>

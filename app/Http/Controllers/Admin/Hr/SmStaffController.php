@@ -22,6 +22,9 @@ use App\Traits\CustomFields;
 use App\User;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -37,6 +40,9 @@ use App\SmSchool;
 use App\SmSection;
 use App\SmClassSection;
 use App\SmClass;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BulkExport;
+ 
 class SmStaffController extends Controller
 {
     use CustomFields;
@@ -98,6 +104,54 @@ class SmStaffController extends Controller
 
         } catch (\Exception $e) { 
             // dd($e->getMessage());
+            Toastr::error('Operation Failed', 'Failed');
+            return redirect()->back();
+        }
+    }
+    public function staffListReportxlsx($type){
+        $smStaff = DB::table('sm_staffs')->where('user_id',Auth::user()->id)->first(); 
+        $district =District::where('district_id',$smStaff->district_idFk)->first();  
+        try {
+             
+            $employees = DB::table('sm_staffs')->get();
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setCellValue('A1', 'staff_no');
+            $sheet->setCellValue('A1', 'name');
+            $sheet->setCellValue('B1', 'attendence_date');
+            $sheet->setCellValue('C1', 'in_time');
+            $sheet->setCellValue('D1', 'out_time');
+            $sheet->setCellValue('E1', 'attendance_type');
+            $sheet->setCellValue('E1', 'district_name');
+            $sheet->setCellValue('F1', 'notes');
+            $rows = 2;
+            foreach($employees as $empDetails){  
+            $sheet->setCellValue('A' . $rows, $empDetails->id);
+            $sheet->setCellValue('B' . $rows, $empDetails->full_name);
+            $sheet->setCellValue('C' . $rows, date('Y-m-d H:i:s'));
+            $sheet->setCellValue('D' . $rows, date('H:i:s'));
+            $sheet->setCellValue('E' . $rows, date('H:i:s'));
+            $sheet->setCellValue('F' . $rows, 'p');
+            $sheet->setCellValue('F' . $rows, $district->district_name);
+            $sheet->setCellValue('F' . $rows, 'pdfa');
+            $rows++;
+            }
+            $fileName = "emp.".$type; 
+
+            if($type == 'xlsx') {
+            $writer = new Xlsx($spreadsheet); 
+            } else if($type == 'xls') {
+            $writer = new Xls($spreadsheet);
+            } 
+          return Excel::download(new BulkExport, 'bulkData.xlsx');
+            $writer->save('export/' . $fileName); 
+            header("Content-Type: application/vnd.ms-excel");
+            return redirect(url('/')."/staff_directory_listing/".$fileName);
+
+            // return view('backEnd.humanResource.staff_list_report', compact('all_staffs', 'roles','school_info'));
+
+        } catch (\Exception $e) { 
+            dd($e->getMessage());
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
         }
