@@ -22,7 +22,7 @@ class SmRolePermissionController extends Controller
 
 
     public function assignPermission(Request $request,$id){
- 
+
 		try{
 			// $role = InfixRole::find($id);
 			 if (checkAdmin()) {

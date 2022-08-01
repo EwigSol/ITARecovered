@@ -198,7 +198,7 @@ class RolePermissionController extends Controller
 
     public function assignPermission($id)
     { 
-       
+      
         try {
            
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');

@@ -133,10 +133,10 @@
                     @if($role->id ==11)
                          <div class="  single_role_blocks" >
                                 <div class="input-effect">
-                                     <select name="school_id" required="required" class="niceSelect w-100 bb form-control {{ $errors->has('school_id') ? ' is-invalid' : '' }}" id="school_id">
+                                     <select name="school_id" required="required" class="niceSelect w-100 bb form-control {{ $errors->has('school_id') ? ' is-invalid' : '' }}" onchange="get_location_school(this);" id="school_id">
                                         <option data-display="@lang('select school')" value="">@lang('select school')</option>
                                             @foreach($sm_stuff as $school)
-                                            <option value="{{$school->id}}" >{{$school->school_name}} </option>
+                                            <option value="{{$school->id}}" @if(Request::segment(3) == $school->id )selected @endif >{{$school->school_name}} </option>
                                             @endforeach
                                     </select>
                                     @if ($errors->has('school_id'))
@@ -150,10 +150,10 @@
                     @elseif($role->id ==10)
                     <div class="single_role_blocks">
                                 <div class="input-effect">
-                                     <select name="district_id" required="required" class="niceSelect w-100 bb form-control {{ $errors->has('district_id') ? ' is-invalid' : '' }}" id="district_id">
-                                        <option data-display="@lang('select district')" value="">@lang('district')</option>
+                                     <select name="district_id" required="required" class="niceSelect w-100 bb form-control {{ $errors->has('district_id') ? ' is-invalid' : '' }}" id="district_id" onchange="get_location(this);">
+                                        <option data-display="@lang('select district')" value="0">@lang('district')</option>
                                          @foreach($districts as $district)
-                                            <option value="{{$district->district_id}}" {{isset($editData)? (@$editData->district_idFk  == $district->district_id? 'selected':''):''}}>{{$district->district_name}} </option>
+                                            <option value="{{$district->district_id}}" @if(Request::segment(3) == $district->district_id )selected @endif>{{$district->district_name}} </option>
                                         @endforeach
                                     </select>
                                     @if ($errors->has('district_id'))
@@ -404,5 +404,20 @@
     // });
 </script> -->
 
+<script type="text/javascript">
+  function get_location(data)
+  { 
+    var selectedText = data.options[data.selectedIndex].innerHTML;
+    var selectedValue = data.value;
+ 
+    window.location.href = "{{URL::to('assign-permission-district/10')}}/"+selectedValue;
 
+  }
+  function get_location_school(data){
+    var selectedText = data.options[data.selectedIndex].innerHTML;
+    var selectedValue = data.value;
+ 
+    window.location.href = "{{URL::to('assign-permission-district/11')}}/"+selectedValue;
+  }
+</script>
 @endsection

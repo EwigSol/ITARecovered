@@ -10,7 +10,12 @@ use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Auth;
 use Modules\RolePermission\Entities\InfixRole;
-
+use DB;
+use Modules\RolePermission\Entities\InfixPermissionAssign;
+use Modules\RolePermission\Entities\InfixModuleStudentParentInfo;
+use App\SmSchool;
+use App\Models\District; 
+use Modules\RolePermission\Entities\InfixModuleInfo;
 class SmRolePermissionController extends Controller
 {
     public function __construct()
@@ -81,5 +86,120 @@ class SmRolePermissionController extends Controller
 		   Toastr::error('Operation Failed', 'Failed');
 		   return redirect()->back();
 		}
+    }
+    public function assignPermissionDistrict($id,$school_district_id){
+    	 try {
+            $sm_stuff =$school_ids= '';
+           
+            
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            $role = InfixRole::where('is_saas',0)->where('id',$id)->first(); 
+            if ($id == 10) {
+            $assign_modules = InfixPermissionAssign::where('district_idFk',$school_district_id)->where('role_id', $id)->get(); 
+            }else{
+            $assign_modules = InfixPermissionAssign::where('school_id',$school_district_id)->where('role_id', $id)->get();	
+            } 
+           
+            $sm_stuff = SmSchool::where('active_status',1);
+            
+            $sm_stuff=$sm_stuff->get(); 
+            $districts = District::get();
+            $already_assigned = [];
+            foreach ($assign_modules as $assign_module) {
+                $already_assigned[] = $assign_module->module_id;
+            }
+            
+
+            if ($id != 2 && $id != 3) {
+
+                $all_modules = InfixModuleInfo::query();
+
+                if (moduleStatusCheck('Zoom')== FALSE) {
+                    $all_modules->where('module_id','!=',22);
+                } 
+                if (moduleStatusCheck('ParentRegistration')== FALSE) {
+                    $all_modules->where('module_id','!=',21);
+                } 
+            
+                if (moduleStatusCheck('Jitsi')== FALSE) {
+                    $all_modules->where('module_id','!=',30);
+                }
+
+                if (moduleStatusCheck('Lesson')== FALSE) {
+                    $all_modules->where('module_id','!=',29);
+                }
+                 if (moduleStatusCheck('BBB')== FALSE) {
+                    $all_modules->where('module_id','!=',33);
+                }
+                 if (moduleStatusCheck('OnlineExam')== FALSE) {
+                    $all_modules->where('module_id','!=',32);
+                }
+
+                if (moduleStatusCheck('Saas')== True) {
+                    $all_modules->whereNotIn('module_id',[19,20]);
+                }
+
+
+                if (moduleStatusCheck('OnlineExam')== FALSE) {
+                    $all_modules->where('module_id','!=',101);
+                } 
+
+
+                if (moduleStatusCheck('OnlineExam')== FALSE) {
+                    $all_modules->where('module_id','!=',101);
+                } 
+                if (moduleStatusCheck('OnlineExam')== True) {
+                    $all_modules->where('module_id','!=',51);
+                }
+
+                $all_modules =  $all_modules->where('is_saas',0)->where('parent_id',0)->where('active_status', 1)->get();
+                // $all_modules = InfixModuleInfo::where('is_saas',0)->where('active_status', 1)->where('module_id','!=',22)->get();
+
+
+                $all_modules = $all_modules->groupBy('module_id');
+ 
+
+                return view('rolepermission::role_permission', compact('role', 'all_modules', 'already_assigned','sm_stuff','districts'));
+            } else {
+
+                if ($id == 2) {
+                    $user_type = 1;
+                } else {
+                    $user_type = 2;
+                }
+
+                $all_modules=InfixModuleStudentParentInfo::query();
+
+                if (moduleStatusCheck('Zoom')== FALSE) {
+                    $all_modules->where('module_id','!=',2022);
+                } 
+          
+            
+                if (moduleStatusCheck('Jitsi')== FALSE) {
+                    $all_modules->where('module_id','!=',2030);
+                }
+
+                 if (moduleStatusCheck('BBB')== FALSE) {
+                    $all_modules->where('module_id','!=',2033);
+                }
+                 if (moduleStatusCheck('OnlineExam')== FALSE) {
+                    $all_modules->where('module_id','!=',101);
+                }
+                if (moduleStatusCheck('OnlineExam')== True) {
+                    $all_modules->where('module_id','!=',10);
+                }
+                 if (moduleStatusCheck('OnlineExam')== true) {
+                    $all_modules->where('module_id','!=',100);
+                }
+
+                $all_modules =$all_modules->where('active_status', 1)->where('user_type', $user_type)->where('parent_id', 0)->get();
+               
+                return view('rolepermission::role_permission_student', compact('role', 'all_modules', 'already_assigned', 'user_type','sm_stuff','school_ids'));
+            }
+        } catch (\Exception $e) {
+            Toastr::error($e->getMessage(), 'Failed');
+            Toastr::error('Operation Failed', 'Failed');
+            return redirect()->back();
+        }
     }
 }

@@ -199,9 +199,9 @@ class RolePermissionController extends Controller
 
     public function assignPermission($id)
     {
-          
+           
         try {
-            $sm_stuff = '';
+            $sm_stuff=$school_ids = '';
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $role = InfixRole::where('is_saas',0)->where('id',$id)->first(); 
             $assign_modules = InfixPermissionAssign::where('school_id',Auth::user()->school_id)->where('role_id', $id)->get(); 
@@ -300,7 +300,7 @@ class RolePermissionController extends Controller
 
                 $all_modules =$all_modules->where('active_status', 1)->where('user_type', $user_type)->where('parent_id', 0)->get();
                
-                return view('rolepermission::role_permission_student', compact('role', 'all_modules', 'already_assigned', 'user_type','sm_stuff'));
+                return view('rolepermission::role_permission_student', compact('role', 'all_modules', 'already_assigned', 'user_type','sm_stuff','school_ids'));
             }
         } catch (\Exception $e) {
             Toastr::error($e->getMessage(), 'Failed');

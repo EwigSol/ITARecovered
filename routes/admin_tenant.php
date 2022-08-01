@@ -126,7 +126,7 @@ Route::group(['middleware' => ['XSS','subscriptionAccessUrl']], function () {
         Route::get('assign-permission/{id}', ['as' => 'assign_permission', 'uses' => 'SmRolePermissionController@assignPermission']);
         Route::post('role-permission-store', ['as' => 'role_permission_store', 'uses' => 'SmRolePermissionController@rolePermissionStore']);
 
-
+        Route::get('assign-permission-district/{role_id}/{district_id}', ['as' => 'assign-permission-district', 'uses' => 'Admin\RolePermission\SmRolePermissionController@assignPermissionDistrict']);
         // Module Permission
 
         Route::get('module-permission', 'Admin\RolePermission\RoleController@modulePermission')->name('module-permission');
