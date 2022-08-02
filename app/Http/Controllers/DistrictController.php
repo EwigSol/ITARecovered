@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Admin\Hr\SmDepartmentRequest;
 use App\SmHumanDepartment;
 use App\Models\District;
+use App\Models\Province;
 class DistrictController extends Controller
 {
      
@@ -17,8 +18,8 @@ class DistrictController extends Controller
     public function index(Request $request){  
     try {
             $districts = District::get();
-
-            return view('backEnd.district.index', compact('districts'));
+            $provinces = Province::get();
+            return view('backEnd.district.index', compact('districts','provinces'));
         } catch (\Exception $e) {
             // dd($e->getMessage());
             Toastr::error('Operation Failed', 'Failed');
@@ -30,6 +31,7 @@ class DistrictController extends Controller
  
         try {
             $district = new District();
+            $district->province_idFk = $request->province_idFk;
             $district->district_name = $request->name;
             // $district->school_id = Auth::user()->school_id;dd($district);
             $district->created_at = date('Y-m-d H:i:s');
@@ -56,14 +58,14 @@ class DistrictController extends Controller
              $district = District::find($id);
 
             $districts = District::get();
- 
+            $provinces = Province::get();
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];
                 $data['district'] = $district->toArray();
                 $data['districts'] = $districts->toArray();
                 return ApiBaseMethod::sendResponse($data, null);
             }
-            return view('backEnd.district.index', compact('district', 'districts'));
+            return view('backEnd.district.index', compact('district', 'districts','provinces'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
@@ -75,7 +77,7 @@ class DistrictController extends Controller
         try {
 
             $district = District::find($id);
-           
+            $district->province_idFk = $request->province_idFk;
             $district->district_name = $request->name;
             $result = $district->save();
 
