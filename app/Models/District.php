@@ -17,6 +17,7 @@ class District extends Model
 
     protected $fillable = [
         "district_id",
+        "province_idFk",
         "district_name",        
         "status",
         "created_at",

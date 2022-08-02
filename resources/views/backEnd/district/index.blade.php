@@ -57,7 +57,22 @@
                             <div class="add-visitor">
                                 <div class="row">
                                     <div class="col-lg-12">
+                                        <div class="input-effect">
+                                     <select name="province_idFk"   class="niceSelect w-100 bb form-control {{ $errors->has('province_idFk') ? ' is-invalid' : '' }}" id="province_idFk">
+                                        <option data-display="@lang('select province')" value="{{old('province_idFk')}}">@lang('province')<span>*</span></option>
+                                          @foreach($provinces as $province)
+                                             <option value="{{$province->p_id}}" @if(isset($district->province_idFk)&&$district->province_idFk == $province->p_id) selected @endif>{{$province->p_name}}</option>
+                                            @endforeach
                                         
+                                    </select>
+                                    @if ($errors->has('province_idFk'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('province_idFk') }}</strong>
+                                    </span>
+                                    @endif
+
+                                 </div> 
+                                 <br><br><br>
                                         <div class="input-effect">
                                             <input class="primary-input form-control{{ $errors->has('name') ? ' is-invalid' : '' }}"
                                                 type="text" name="name" autocomplete="off" value="{{isset($district)? $district->district_name:''}}">
@@ -70,6 +85,8 @@
                                             </span>
                                             @endif
                                         </div>
+                                       <!--  <div class="input-effect">  <label for="w3review">District Name:</label> 
+  <textarea class="col-lg-12"  class="primary-input form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" id="w3review" name="w3review" rows="4" cols="50"></textarea></div> -->
                                         
                                     </div>
                                 </div>
