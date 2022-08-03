@@ -11,7 +11,8 @@ use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Admin\Academics\SectionRequest;
-
+use App\Models\District;
+use App\SmSchool;
 class SmSectionController extends Controller
 {
     public function __construct()
@@ -25,13 +26,20 @@ class SmSectionController extends Controller
         
 
         try {
-          
+            $user = Auth::user();
+            $role_id = $user->role_id;
             $sections = SmSection::get();
-         
+            $school =  SmSchool::where('id',Auth::user()->school_id)->get();
+
+            if ($role_id == 11 || $role_id == 10) { 
+            $districts = District::where('district_id',$school[0]->district_idFk)->get();
+            }else{
+                $districts = District::get();
+            } 
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 return ApiBaseMethod::sendResponse($sections, null);
             }
-            return view('backEnd.academics.section', compact('sections'));
+            return view('backEnd.academics.section', compact('sections','districts'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();
@@ -60,7 +68,8 @@ class SmSectionController extends Controller
             $section = new SmSection();
             $section->section_name = $request->name;
             $section->created_at = YearCheck::getYear() . '-' . date('m-d h:i:s');
-            $section->school_id = Auth::user()->school_id;
+            $section->district_idFk = $request->district_name;
+            $section->school_id = $request->school_name;
             $section->created_at=auth()->user()->id;
             $section->academic_id = getAcademicId();
             $result = $section->save();
@@ -119,6 +128,8 @@ class SmSectionController extends Controller
           
             $section = SmSection::find($request->id);
             $section->section_name = $request->name;
+            $section->district_idFk = $request->district_name;
+            $section->school_id = $request->school_name;
             $result = $section->save();
 
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {

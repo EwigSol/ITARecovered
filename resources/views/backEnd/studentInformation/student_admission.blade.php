@@ -64,15 +64,21 @@
                                 </div>
                             </div>
                         </div>
-                         <input type="hidden" name="url" id="url" value="{{URL::to('/')}}">
+                         <input type="hidden" name="url" id="url" value="{{URL::to('/')}}">  
                         <div class="row mb-40 mt-30">
                             <div class="col-lg-2">
                                 <div class="input-effect sm2_mb_20 md_mb_20">
                                     <select class="niceSelect w-100 bb form-control{{ $errors->has('session') ? ' is-invalid' : '' }}" name="session" id="academic_year">
                                         <option data-display="@lang('common.academic_year') *" value="">@lang('common.academic_year') *</option>
+                                       
                                         @foreach($sessions as $session) 
+                                        @if(isset($academicYears[0]->id))
                                         <option value="{{$session->id}}" {{old('session') == $session->id || $academicYears[0]->id ==$session->id ? 'selected': ''}}>{{$session->year}}[{{$session->title}}]</option>
+                                        @else
+                                        <option value="{{$session->id}}" {{old('session') == $session->id }}>{{$session->year}}[{{$session->title}}]</option>
+                                        @endif
                                         @endforeach
+                                         
                                     </select>
                                     <span class="focus-border"></span>
                                     @if ($errors->has('session'))
@@ -280,13 +286,13 @@
                                     @endif
                                 </div>
                             </div>
-                             @if($role_id != 10)
+                     <!--         @if($role_id != 10)
                     <div class="col-lg-3">
                                 <div class="input-effect">
                                      <select name="district_name" onchange="get_school(this);" class="niceSelect w-100 bb form-control {{ $errors->has('district_name') ? ' is-invalid' : '' }}" id="district_name">
                                         <option data-display="@lang('select district')<span>*</span>" value="{{old('district_name')}}">@lang('select district')<span>*</span></option>
                                          @foreach($districts as $district)
-                                         @if($role_id == 11  )
+                                         @if($role_id == 11)
                                             <option value="{{$district->district_id}}" selected="selected">{{$district->district_name}} </option>
                                         
                                         @else
@@ -302,7 +308,7 @@
 
                                  </div>
                     </div>
-                    @endif
+                    @endif -->
                     <div class="col-lg-3 school_information">
                                 <div class="input-effect">
                                      <select name="school_name" class="nice-select   w-100 bb form-control school_data {{ $errors->has('school_name') ? ' is-invalid' : '' }}" id="school_name" style="color: #828bb2;

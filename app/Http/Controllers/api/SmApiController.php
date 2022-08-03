@@ -4316,7 +4316,7 @@ class SmApiController extends Controller
             $dormitory_lists = SmDormitoryList::where('active_status', '=', '1')->where('school_id', $school_id)->get();
             $driver_lists = SmStaff::where([['active_status', '=', '1'], ['role_id', 9]])->where('school_id', $school_id)->get();
             $categories = SmStudentCategory::all();
-            $sessions = SmAcademicYear::where('active_status', '=', '1')->where('school_id', $school_id)->get();
+            $sessions = SmAcademicYear::where('active_status', '=', '1')->get();
             $siblings = SmStudent::where('parent_id', $student->parent_id)->where('school_id', $school_id)->get();
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];
@@ -4926,7 +4926,7 @@ class SmApiController extends Controller
     public function saas_studentPromote_index(Request $request, $school_id)
     {
         try {
-            $sessions = SmAcademicYear::where('active_status', 1)->where('school_id', $school_id)->get();
+            $sessions = SmAcademicYear::where('active_status', 1)->get();
             $classes = SmClass::where('active_status', 1)->where('academic_id', SmAcademicYear::SINGLE_SCHOOL_API_ACADEMIC_YEAR())->where('school_id', $school_id)->get();
 
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {

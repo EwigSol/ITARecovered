@@ -26,7 +26,7 @@ class SmStudentPromoteController extends Controller
     {
         try {
             $generalSetting = generalSetting();
-            $sessions = SmAcademicYear::where('active_status', 1)->where('school_id', Auth::user()->school_id)->get();
+            $sessions = SmAcademicYear::where('active_status', 1)->get();
             $classes = SmClass::where('active_status', 1)->where('academic_id', getAcademicId())
                 ->where('school_id', Auth::user()->school_id)->get();
             $exams = SmExamType::where('active_status', 1)->where('academic_id', getAcademicId())
@@ -83,7 +83,7 @@ class SmStudentPromoteController extends Controller
             $current_section = $request->current_section;
             $promote_session = $request->promote_session;
             $sessions = SmAcademicYear::where('active_status', 1)
-                ->where('school_id', Auth::user()->school_id)
+                // ->where('school_id', Auth::user()->school_id)
                 ->get();
             $currrent_academic_class = SmClass::where('active_status', 1)
                 ->where('academic_id', $request->current_session)
@@ -293,7 +293,7 @@ class SmStudentPromoteController extends Controller
             $promote_session = $request->promote_session;
             $exam_id = $request->exam;
             $sessions = SmAcademicYear::where('active_status', 1)
-                ->where('school_id', Auth::user()->school_id)
+                // ->where('school_id', Auth::user()->school_id)
                 ->get();
 
             $classes = SmClass::with('classSection')->where('active_status', 1)

@@ -191,7 +191,8 @@ $styles = allStyles();
                                 <select class="niceSelect infix_session" id="infix_session">
                                 
                                     <option data-display="Academic Year" value="0">@lang('common.academic_year') </option>
-                                    @foreach (academicYears() as $academic_year)
+                                    <?php $academic_Years=DB::table('sm_academic_years')->where('active_status',1)->get(); ?>
+                                    @foreach ($academic_Years as $academic_year)
                                         <option value="{{ @$academic_year->id }}" {{ getAcademicId()==@$academic_year->id?'selected':''}}>{{ @$academic_year->year }} [{{@$academic_year->title}}]</option>
                                     @endforeach
                                 </select>

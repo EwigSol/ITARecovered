@@ -32,14 +32,23 @@ class SmClassController extends Controller
 
 
         try {
-            $sections = SmSection::get(); 
-            
+            $user = Auth::user();
+            $role_id = $user->role_id;
+            $sections = SmSection::get();
+            $school =  SmSchool::where('id',Auth::user()->school_id)->get();
+
+            if ($role_id == 11 || $role_id == 10) { 
+            $districts = District::where('district_id',$school[0]->district_idFk)->get();
+            }else{
+            $districts = District::get();
+            } 
+             
             $classes = SmClass::with('groupclassSections')->get();  
             // $classes = DB::table('sm_classes')
             // ->leftjoin('sm_class_sections','class_id','sm_classes.id')
             // ->leftjoin('sm_sections','','')->where('active_status',1)
 
-            $districts = District::get();
+       
         
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];

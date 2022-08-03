@@ -104,14 +104,19 @@ class RegisterationController extends Controller
             // if ($role_id == 11 || $role_id == 10) { 
             // $districts = District::where('district_id',$school[0]->district_idFk)->get();
             // }else{
-                $districts = District::get();  
+                // $districts = District::get();  
             // } 
-            $session_ids = SmAcademicYear::where('school_id', Auth::user()->school_id)->where('active_status', 1)->get(); 
+            if ($role_id == 11 || $role_id == 10) { 
+            $districts = District::where('district_id',$school[0]->district_idFk)->get();  
+            }else{
+                $districts = District::get();
+            } 
+            $session_ids = SmAcademicYear::where('active_status', 1)->get(); 
             $dateFormats = SmDateFormat::where('active_status', 1)->get();
             $languages = SmLanguage::all();
             $countries = SmCountry::select('currency')->groupBy('currency')->get();
             $currencies = SmCurrency::where('school_id',auth()->user()->school_id)->get();
-            $academic_years = SmAcademicYear::where('school_id', Auth::user()->school_id)->get();
+            $academic_years = SmAcademicYear::where('active_status', 1)->get();
             $time_zones = SmTimeZone::all();
             $weekends = SmWeekend::where('school_id', Auth::user()->school_id)->get();
             $program = Program::get();

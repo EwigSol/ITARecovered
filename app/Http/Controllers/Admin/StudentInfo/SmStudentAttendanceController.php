@@ -6,6 +6,7 @@ use App\SmClass;
 use App\SmStaff;
 use App\SmSection;
 use App\SmStudent;
+use App\SmSchool;
 use App\ApiBaseMethod;
 use App\SmClassSection;
 use App\SmStudentAttendance;
@@ -31,14 +32,27 @@ class SmStudentAttendanceController extends Controller
     {
         try {
 
-          
+            $user = Auth::user();
+            $role_id = $user->role_id;  
+            $school =  SmSchool::where('id',auth()->user()->school_id)->get();
             if (teacherAccess()) {
                  $teacher_info=SmStaff::where('user_id',auth()->user()->id)->first();
                  $classes = $teacher_info->classes;
-                 $districts = District::get();
+                  
+            if ($role_id == 11 || $role_id == 10) { 
+            $districts = District::where('district_id',$school[0]->district_idFk)->get();  
+            }else{
+                $districts = District::get();
+            } 
             } else {
                  $classes = SmClass::get();
-                 $districts = District::get();
+                  
+                if ($role_id == 11 || $role_id == 10) { 
+                $districts = District::where('district_id',$school[0]->district_idFk)->get();
+                $classes = SmClass::where('school_id',auth()->user()->school_id)->get();
+                }else{
+                    $districts = District::get();
+                } 
             }
  
             return view('backEnd.studentInformation.student_attendance', compact('classes','districts'));

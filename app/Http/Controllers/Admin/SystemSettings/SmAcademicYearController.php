@@ -34,7 +34,7 @@ class SmAcademicYearController extends Controller
     public function index(Request $request)
     {
         try {
-            $academic_years = SmAcademicYear::where('active_status', 1)->orderBy('year', 'ASC')->where('school_id', Auth::user()->school_id)->get();
+            $academic_years = SmAcademicYear::where('active_status', 1)->orderBy('year', 'ASC')->get();
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 return ApiBaseMethod::sendResponse($academic_years, null);
             }
@@ -48,7 +48,7 @@ class SmAcademicYearController extends Controller
     public function store(SmAcademicYearRequest $request)
     {
 
-        $yr = SmAcademicYear::orderBy('id', 'desc')->where('school_id', Auth::user()->school_id)->first();
+        $yr = SmAcademicYear::orderBy('id', 'desc')->where('active_status', 1)->first();
         $created_year = $request->starting_date;
        
         DB::beginTransaction();
@@ -65,7 +65,7 @@ class SmAcademicYearController extends Controller
         $result = $academic_year->save();
         if($result){
             session()->forget('academic_years');
-            $academic_years = SmAcademicYear::where('active_status', 1)->where('school_id', Auth::user()->school_id)->get();
+            $academic_years = SmAcademicYear::where('active_status', 1)->get();
             session()->put('academic_years',$academic_years);   
         }
         $sm_Gs = SmGeneralSettings::where('school_id', Auth::user()->school_id)->first();
@@ -143,9 +143,9 @@ class SmAcademicYearController extends Controller
              if (checkAdmin()) {
                 $academic_year = SmAcademicYear::find($id);
             }else{
-                $academic_year = SmAcademicYear::where('id',$id)->where('school_id',Auth::user()->school_id)->first();
+                $academic_year = SmAcademicYear::where('id',$id)->where('active_status', 1)->first();
             }
-            $academic_years = SmAcademicYear::where('school_id', Auth::user()->school_id)->get();
+            $academic_years = SmAcademicYear::where('active_status', 1)->get();
             if (ApiBaseMethod::checkUrl($request->fullUrl())) {
                 $data = [];
                 $data['academic_year'] = $academic_year->toArray();
@@ -194,13 +194,13 @@ class SmAcademicYearController extends Controller
                 ->withInput();
         }
         try {
-            $yr = SmAcademicYear::where('id', getAcademicId())->where('school_id', Auth::user()->school_id)->first();
+            $yr = SmAcademicYear::where('id', getAcademicId())->where('active_status', 1)->first();
             $created_year = $request->starting_date;
             if ($yr->year != $request->year) {
                 if (checkAdmin()) {
                     $aca_year = SmAcademicYear::where('id',$request->id)->select('copy_with_academic_year')->first();
                 }else{
-                    $aca_year = SmAcademicYear::where('id',$request->id)->where('school_id',Auth::user()->school_id)->select('copy_with_academic_year')->first();
+                    $aca_year = SmAcademicYear::where('id',$request->id)->where('active_status', 1)->select('copy_with_academic_year')->first();
                 }
 
                 $del_tables = explode(',',@$aca_year->copy_with_academic_year);
@@ -270,7 +270,7 @@ class SmAcademicYearController extends Controller
             if (checkAdmin()) {
                 $academic_year = SmAcademicYear::find($request->id);
             }else{
-                $academic_year = SmAcademicYear::where('id',$request->id)->where('school_id',Auth::user()->school_id)->first();
+                $academic_year = SmAcademicYear::where('id',$request->id)->where('active_status', 1)->first();
             }
             $academic_year->year = $request->year;
             $academic_year->title = $request->title;
@@ -320,7 +320,7 @@ class SmAcademicYearController extends Controller
                     if (checkAdmin()) {
                         $delete_query = SmAcademicYear::find($id);
                     }else{
-                        $delete_query = SmAcademicYear::where('id',$id)->where('school_id',Auth::user()->school_id)->first();
+                        $delete_query = SmAcademicYear::where('id',$id)->where('active_status', 1)->first();
                     }
 
 
@@ -343,7 +343,7 @@ class SmAcademicYearController extends Controller
                    
                     if ($delete_query) {
                         session()->forget('academic_years');
-                        $academic_years = SmAcademicYear::where('active_status', 1)->where('school_id', Auth::user()->school_id)->get();
+                        $academic_years = SmAcademicYear::where('active_status', 1)->where('active_status', 1)->get();
                         session()->put('academic_years', $academic_years);
                         
                         Toastr::success('Operation successful', 'Success');

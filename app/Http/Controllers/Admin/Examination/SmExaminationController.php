@@ -63,7 +63,7 @@ class SmExaminationController extends Controller
     public function resultsArchiveView()
     {
         try {
-            $academic_years = SmAcademicYear::where('school_id', Auth::user()->school_id)->get();
+            $academic_years = SmAcademicYear::where('active_status', 1)->get();
             $exam_types = SmExamType::where('school_id', Auth::user()->school_id)->get();
             $classes = SmClass::where('active_status', 1)->where('academic_id', getAcademicId())->where('school_id', Auth::user()->school_id)->get();
             return view('backEnd.examination.resultsArchiveView', compact('classes', 'exam_types', 'academic_years'));

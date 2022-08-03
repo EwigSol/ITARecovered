@@ -489,7 +489,7 @@ if (!function_exists('getAcademicId')) {
         } else {
             $session_id = generalSetting()->session_id;
             if(!$session_id){
-                $session_id = SmAcademicYear::where('school_id', Auth::user()->school_id)->where('active_status', 1)->first()->id;
+                $session_id = SmAcademicYear::where('active_status', 1)->first()->id;
             }
             session()->put('sessionId', $session_id);
             return session()->get('sessionId');
@@ -1380,7 +1380,7 @@ if (!function_exists('academicYears')) {
         if (session()->has('academic_years')) {
             return session()->get('academic_years');
         } else {
-            $academic_years = Auth::check() ? SmAcademicYear::where('active_status', 1)->where('school_id', Auth::user()->school_id)->get() : '';
+            $academic_years = Auth::check() ? SmAcademicYear::where('active_status', 1)->get() : '';
             session()->put('academic_years', $academic_years);
             return session()->get('academic_years');
         }
