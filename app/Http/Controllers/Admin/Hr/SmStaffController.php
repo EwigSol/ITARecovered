@@ -1076,8 +1076,16 @@ class SmStaffController extends Controller
         }
     }
     public function districtWischool(Request $request){
-         
-        $data = SmSchool::where('district_idFk',$request->id)->get();
+        $user = Auth::user();
+        $role_id = $user->role_id;
+     
+             
+        if ($role_id == 11) { 
+        $data = SmSchool::where('id',auth()->user()->school_id)->get();
+        }else{
+            $data = SmSchool::where('district_idFk',$request->id)->get();
+        }  
+        
 
         return response()->json($data);
     }

@@ -38,13 +38,17 @@
                 <div class="col-lg-12">
                     <div class="white-box">
                         <div class="row">
-                            <input type="hidden" name="url" id="url" value="{{URL::to('/')}}">
+                            <input type="hidden" name="url" id="url" value="{{URL::to('/')}}">  
                             <div class="col-lg-3">
                                 <div class="input-effect sm2_mb_20 md_mb_20">
                                     <select class="niceSelect w-100 bb form-control{{ $errors->has('academic_year') ? ' is-invalid' : '' }}" name="academic_year" id="academic_year">
                                         <option data-display="@lang('common.academic_year') *" value="">@lang('common.academic_year') *</option>
-                                        @foreach($sessions as $session)
-                                            <option value="{{$session->id}}" {{isset($academic) && $academic == $session->id? 'selected': ''}}>{{$session->year}}[{{$session->title}}]</option>
+                                        @foreach($sessions as $session) 
+                                        @if(isset($academicYears[0]->id))
+                                        <option value="{{$session->id}}" {{old('session') == $session->id || $academicYears[0]->id ==$session->id ? 'selected': ''}}>{{$session->year}}[{{$session->title}}]</option>
+                                        @else
+                                        <option value="{{$session->id}}" {{old('session') == $session->id }}>{{$session->year}}[{{$session->title}}]</option>
+                                        @endif
                                         @endforeach
                                     </select>
                                     <span class="focus-border"></span>

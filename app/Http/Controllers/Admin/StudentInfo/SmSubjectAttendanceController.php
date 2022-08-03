@@ -34,8 +34,13 @@ class SmSubjectAttendanceController extends Controller
     public function index(Request $request)
     {
         try{
-              
-                $classes = SmClass::get();            
+                $user = Auth::user();
+            $role_id = $user->role_id;
+            if ($role_id == 11 || $role_id == 10) { 
+                $classes = SmClass::where('school_id',auth()->user()->school_id)->get();
+            }else{
+             $classes = SmClass::get();   
+            }           
                 return view('backEnd.studentInformation.subject_attendance', compact('classes')); 
            
         }catch (\Exception $e) {
@@ -321,7 +326,13 @@ class SmSubjectAttendanceController extends Controller
 
         try{
 
-            $classes = SmClass::get();
+            $user = Auth::user();
+            $role_id = $user->role_id;
+            if ($role_id == 11 || $role_id == 10) { 
+                $classes = SmClass::where('school_id',auth()->user()->school_id)->get();
+            }else{
+             $classes = SmClass::get();   
+            }  
 
             $types = SmStudentCategory::withoutGlobalScope(AcademicSchoolScope::class)->where('school_id',Auth::user()->school_id)->get();
 

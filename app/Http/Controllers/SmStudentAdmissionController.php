@@ -70,7 +70,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Events\StudentPromotionGroupDisable;
 use App\Traits\CustomFields;
-
+use App\SmSchool;
 class SmStudentAdmissionController extends Controller
 {
 
@@ -215,12 +215,20 @@ class SmStudentAdmissionController extends Controller
     public function academicYearGetClass(Request $request)
     {
         try {
-            $academic_year = SmAcademicYear::select('id')->where('school_id', Auth::user()->school_id)->where('id', $request->id)->first();
+            $academic_year = SmAcademicYear::select('id')->where('id', $request->id)->first();
+            $user = Auth::user();
+            $role_id = $user->role_id;
+            $sections = SmSection::get();
+            $school =  SmSchool::where('id',Auth::user()->school_id)->get();
+
 
             $classes = SmClass::where('active_status', '=', '1')
-                ->where('academic_id', $academic_year->id)
-                ->where('school_id', Auth::user()->school_id)
-                ->withoutGlobalScope(StatusAcademicSchoolScope::class)
+                ->where('academic_id', $academic_year->id);
+                if ($role_id == 11 || $role_id == 10) { 
+                    $classes = $classes->where('school_id', Auth::user()->school_id);
+                }
+                
+                $classes = $classes->withoutGlobalScope(StatusAcademicSchoolScope::class)
                 ->get(['class_name','id']);
 
 

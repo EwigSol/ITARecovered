@@ -14,7 +14,7 @@ class RoleRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => "required|unique:infix_roles,name".$this->id,
+            'name' => "required|unique:infix_roles,name",
         ];
     }
 

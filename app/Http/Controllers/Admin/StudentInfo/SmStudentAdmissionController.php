@@ -51,7 +51,13 @@ class SmStudentAdmissionController extends Controller
         try {
             $user = Auth::user();
             $role_id = $user->role_id;
-            $academicYears = academicYears(); 
+            // $academicYears = academicYears(); 
+            $academicYears = SmAcademicYear::where('active_status', 1)
+                // ->where('school_id', Auth::user()->school_id)
+                ->get(); 
+            $sessions = SmAcademicYear::where('active_status', 1)
+                // ->where('school_id', Auth::user()->school_id)
+                ->get();
             if (moduleStatusCheck('SaasSubscription') == true && moduleStatusCheck('Saas') == true) {
 
                 $active_student = SmStudent::where('school_id', Auth::user()->school_id)->where('active_status', 1)->count();
@@ -88,7 +94,7 @@ class SmStudentAdmissionController extends Controller
             }
             $sm_stuff=$sm_stuff->get();
             $programs = Program::get();
-            return view('backEnd.studentInformation.student_admission', $data,compact('sm_stuff','role_id','programs','academicYears'));
+            return view('backEnd.studentInformation.student_admission', $data,compact('sm_stuff','role_id','programs','academicYears','sessions'));
 
         } catch (\Exception $e) {
 
@@ -621,12 +627,14 @@ class SmStudentAdmissionController extends Controller
             $students = SmStudent::where('academic_id', getAcademicId())
                 ->where('school_id', Auth::user()->school_id)
                 ->get();
-
+                $academicYears = SmAcademicYear::where('active_status', 1)
+                // ->where('school_id', Auth::user()->school_id)
+                ->get(); 
             $sessions = SmAcademicYear::where('active_status', 1)
-                ->where('school_id', Auth::user()->school_id)
+                // ->where('school_id', Auth::user()->school_id)
                 ->get();
-
-            return view('backEnd.studentInformation.student_details', compact('classes', 'sessions'));
+ 
+            return view('backEnd.studentInformation.student_details', compact('classes', 'sessions','academicYears'));
         } catch (\Exception $e) {
             Toastr::error('Operation Failed', 'Failed');
             return redirect()->back();

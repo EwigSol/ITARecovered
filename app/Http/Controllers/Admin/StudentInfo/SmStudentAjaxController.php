@@ -241,7 +241,7 @@ class SmStudentAjaxController extends Controller
                             ->get();
             } else {
                 $sectionIds = SmClassSection::where('class_id', '=', $request->id)               
-                            ->where('school_id', Auth::user()->school_id)
+                             
                             ->get();
             }
             $sections = [];

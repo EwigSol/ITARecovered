@@ -32,11 +32,18 @@ class SmStudentAttendanceReportController extends Controller
     public function index(Request $request)
     {
         try {
+            $user = Auth::user();
+            $role_id = $user->role_id;
             if (teacherAccess()) {
                 $teacher_info=SmStaff::where('user_id',Auth::user()->id)->first();
                $classes= $teacher_info->classes;
             } else {
-                $classes = SmClass::get();
+                if ($role_id == 11 || $role_id == 10) { 
+                $classes = SmClass::where('school_id',auth()->user()->school_id)->get();
+                }else{
+                 $classes = SmClass::get();   
+                }
+                
             }
 
 

@@ -26,6 +26,8 @@ class SectionRequest extends FormRequest
     {
         return [
             'name' => ['required',Rule::unique('sm_sections', 'section_name')->where('academic_id', getAcademicId())->where('school_id', auth()->user()->school_id)->ignore($this->id)],
+            'district_name' =>"required",
+            'school_name'=>"required"
         ];
     }
 }
